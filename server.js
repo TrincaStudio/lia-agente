@@ -37,6 +37,7 @@ function getConversationState(conversationId) {
     conversationMemory.set(key, {
       messages: [],
       updatedAt: Date.now(),
+      introduced: false,
     });
   }
 
@@ -64,6 +65,20 @@ function getConversationMessages(conversationId) {
   const key = String(conversationId);
   const state = getConversationState(key);
   return state.messages || [];
+}
+
+function hasIntroduced(conversationId) {
+  if (!conversationId) return false;
+  const state = getConversationState(conversationId);
+  return !!state.introduced;
+}
+
+function markIntroduced(conversationId) {
+  if (!conversationId) return;
+  const state = getConversationState(conversationId);
+  state.introduced = true;
+  state.updatedAt = Date.now();
+  conversationMemory.set(String(conversationId), state);
 }
 
 function clearConversationMemory(conversationId) {
@@ -177,9 +192,10 @@ function getConditionalContext(userMessage) {
   return contexts.join("\n\n");
 }
 
-function buildSystemPrompt(userMessage) {
+function buildSystemPrompt(userMessage, conversationId) {
   const baseContext = getBaseContext();
   const conditionalContext = getConditionalContext(userMessage);
+  const introduced = hasIntroduced(conversationId);
 
   return `
 Você é Lia, a agente de atendimento e qualificação da Trinca Studio.
@@ -197,6 +213,26 @@ Regras importantes:
 - Quando fizer sentido, direcione para conversa humana no WhatsApp
 - Se indicar WhatsApp, use este link quando apropriado: ${WHATSAPP_URL || "WhatsApp da equipe"}
 
+Comportamento conversacional:
+- Responda como em uma conversa contínua, natural e fluida
+- Não trate cada nova mensagem como uma conversa nova
+- Não se reapresente em toda resposta
+- Não repita "Olá! Eu sou a Lia" depois da primeira resposta
+- Não cumprimente novamente se a conversa já começou
+- Continue exatamente do ponto em que a conversa parou
+- Quando a pessoa mandar mensagens curtas como "site de vendas", interprete isso como continuação da mensagem anterior
+- Seja mais direta e útil nas respostas seguintes
+- Evite blocos longos demais quando a conversa já estiver em andamento
+- Faça perguntas de aprofundamento só quando realmente ajudarem a avançar
+- Soe natural, como uma pessoa conduzindo a conversa com contexto
+
+Regra de apresentação:
+${
+  introduced
+    ? "- Esta conversa já começou. Não se apresente novamente. Não cumprimente de novo. Vá direto ao ponto."
+    : '- Esta é a primeira resposta da conversa. Você pode se apresentar uma única vez, de forma breve.'
+}
+
 Contexto fixo:
 ${baseContext}
 
@@ -206,16 +242,13 @@ ${conditionalContext}
 }
 
 async function generateLiaReply(conversationId, userMessage) {
-  const systemPrompt = buildSystemPrompt(userMessage);
+  const systemPrompt = buildSystemPrompt(userMessage, conversationId);
   const history = getConversationMessages(conversationId);
 
   const completion = await openai.chat.completions.create({
     model: LIA_MODEL,
-    messages: [
-      { role: "system", content: systemPrompt },
-      ...history,
-    ],
-    temperature: 0.7,
+    messages: [{ role: "system", content: systemPrompt }, ...history],
+    temperature: 0.5,
   });
 
   return completion.choices[0].message.content?.trim();
@@ -242,6 +275,10 @@ app.post("/test", async (req, res) => {
 
     if (reply) {
       addMessageToMemory(conversationId, "assistant", reply);
+
+      if (!hasIntroduced(conversationId)) {
+        markIntroduced(conversationId);
+      }
     }
 
     return res.status(200).json({
@@ -249,6 +286,7 @@ app.post("/test", async (req, res) => {
       question: message,
       answer: reply || "",
       memorySize: getConversationMessages(conversationId).length,
+      introduced: hasIntroduced(conversationId),
     });
   } catch (error) {
     console.error("Erro no teste da Lia:", error?.response?.data || error.message);
@@ -299,6 +337,10 @@ app.post("/webhook/chatwoot", async (req, res) => {
     }
 
     addMessageToMemory(conversationId, "assistant", reply);
+
+    if (!hasIntroduced(conversationId)) {
+      markIntroduced(conversationId);
+    }
 
     await axios.post(
       `${CHATWOOT_BASE_URL}/api/v1/accounts/${accountId}/conversations/${conversationId}/messages`,

@@ -94,8 +94,9 @@ O convite deve ser:
 
 ### **Versão principal**
 
-Posso te colocar em contato direto com a equipe da Trinca para uma conversa de 30 a 45 minutos e ver se faz sentido avançar.  
-Você conta o contexto, nós explicamos como trabalhamos, e juntos avaliamos o fit.
+Perfeito. Com esse cenário, faz sentido avançar.
+
+Posso te colocar em contato com o time para aprofundarmos isso?
 
 ---
 
@@ -163,5 +164,5 @@ Sem problema. Fico por aqui caso queira esclarecer mais alguma coisa.
 
 ## **Frase-guia deste documento**
 
-O WhatsApp é continuação da conversa, não fechamento forçado.
+WhatsApp é o próximo passo lógico — não um convite solto
 

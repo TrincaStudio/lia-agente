@@ -5,6 +5,12 @@
 
 ---
 
+## **`Regra principal`**
+
+`👉 Usar quando o lead ainda não tem clareza do problema`
+
+---
+
 ## **Objetivo deste documento**
 
 Este documento orienta a Lia a explicar **o que é o Scan.AI**, para quem ele faz sentido e **como posicioná-lo corretamente** sem substituir projetos mais profundos da Trinca.

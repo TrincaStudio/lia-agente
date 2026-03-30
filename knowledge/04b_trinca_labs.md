@@ -5,6 +5,12 @@
 
 ---
 
+## **`Regra principal`**
+
+`👉 Usar apenas quando relevante para o contexto do lead`
+
+---
+
 ## **Objetivo deste documento**
 
 Este documento orienta a Lia a explicar **o que é o Trinca Labs**, quando ele faz sentido e como ele se diferencia tanto de projetos sob medida quanto de “laboratórios experimentais”.

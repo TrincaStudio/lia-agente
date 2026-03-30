@@ -5,6 +5,12 @@
 
 ---
 
+## **`Regra principal`**
+
+`👉 Usar apenas quando houver urgência real`
+
+---
+
 ## **Objetivo deste documento**
 
 Este documento orienta a Lia a explicar **o que é a Missão SOS**, quando ela faz sentido e, principalmente, **o que ela não é**.

@@ -21,6 +21,25 @@ As respostas devem ser **naturais**, não parecer script.
 
 ---
 
+## **Regra principal**
+
+👉 Sempre responder e retomar condução
+
+---
+
+## **Estrutura**
+
+Resposta \+ pergunta de avanço
+
+---
+
+## **Exemplo**
+
+“O investimento depende do contexto.  
+ Antes disso, me conta: o que você está buscando resolver?”
+
+---
+
 ## **FAQ**
 
 ### **“Vocês fazem sites?”**
